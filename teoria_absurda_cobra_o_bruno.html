@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REVELADO: O Cobra é o Bruno?! 🐍🔪</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fontes Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Press+Start+2P&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        purpleguy: {
+                            light: '#a855f7',
+                            DEFAULT: '#7e22ce',
+                            dark: '#3b0764',
+                            glow: '#d8b4fe'
+                        },
+                        knife: {
+                            light: '#e2e8f0',
+                            DEFAULT: '#94a3b8',
+                            dark: '#334155',
+                            accent: '#38bdf8'
+                        }
+                    },
+                    fontFamily: {
+                        retro: ['"Press Start 2P"', 'cursive'],
+                        fun: ['Fredoka', 'sans-serif'],
+                        tech: ['"Space Grotesk"', 'sans-serif']
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 2s infinite alternate',
+                        'float': 'float 3s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                        'glitch': 'glitch 0.3s infinite',
+                        'shake': 'shake 0.5s infinite',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%': { boxShadow: '0 0 15px rgba(168, 85, 247, 0.4), 0 0 30px rgba(56, 189, 248, 0.2)' },
+                            '100%': { boxShadow: '0 0 30px rgba(168, 85, 247, 0.9), 0 0 60px rgba(56, 189, 248, 0.6)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-12px) rotate(2deg)' },
+                        },
+                        shake: {
+                            '0%, 100%': { transform: 'translateX(0)' },
+                            '25%': { transform: 'translateX(-5px) translateY(5px)' },
+                            '75%': { transform: 'translateX(5px) translateY(-5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #090514;
+            color: #f1f5f9;
+            font-family: 'Fredoka', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Scanline FX estilo retro FNAF */
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.3) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+            pointer-events: none;
+        }
+
+        /* Efeito de Neon Glow Text */
+        .neon-purple {
+            text-shadow: 0 0 8px #a855f7, 0 0 20px #7e22ce, 0 0 35px #a855f7;
+        }
+        .neon-cyan {
+            text-shadow: 0 0 8px #38bdf8, 0 0 20px #0284c7, 0 0 35px #38bdf8;
+        }
+
+        /* Pixel Art Purple Guy feito em CSS Puro */
+        .purple-guy-pixel {
+            width: 120px;
+            height: 140px;
+            position: relative;
+            background: #6b21a8;
+            box-shadow: 
+                /* Cabeça e Olhos */
+                0 -20px 0 #6b21a8,
+                20px -20px 0 #6b21a8,
+                -20px -20px 0 #6b21a8,
+                /* Olhos Brancos */
+                -10px -15px 0 #ffffff,
+                15px -15px 0 #ffffff,
+                /* Sorriso */
+                -10px -2px 0 #ffffff,
+                0 -2px 0 #ffffff,
+                10px -2px 0 #ffffff,
+                /* Corpo e Distintivo Amarelo */
+                -25px 20px 0 #581c87,
+                25px 20px 0 #581c87,
+                -15px 15px 0 #facc15; /* Emblema */
+        }
+
+        /* Faca de Pixel Art / Estilizada */
+        .knife-glow {
+            filter: drop-shadow(0 0 12px #38bdf8) drop-shadow(0 0 25px #ffffff);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090514;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #6b21a8;
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a855f7;
+        }
+
+        /* Canvas Overlay para efeitos */
+        #fx-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body class="relative min-h-screen selection:bg-purpleguy-light selection:text-black">
+
+    <!-- Scanlines overlay para clima FNAF -->
+    <div class="scanlines fixed inset-0 z-50"></div>
+
+    <!-- Canvas de Efeitos Especiais (Confetes/Glitch) -->
+    <canvas id="fx-canvas"></canvas>
+
+    <!-- Audio Synth Control / Sound FX Toggle -->
+    <div class="fixed top-4 right-4 z-50 flex items-center gap-2 bg-slate-900/80 backdrop-blur-md border border-purpleguy-light/40 p-2 rounded-full shadow-lg">
+        <button id="sound-toggle" onclick="toggleSound()" class="p-2 text-purpleguy-light hover:text-white transition flex items-center gap-2 text-xs font-tech">
+            <i data-lucide="volume-2" id="sound-icon"></i>
+            <span id="sound-status">SOM: ON</span>
+        </button>
+    </div>
+
+    <!-- NAVBAR / HEADER FIXO -->
+    <nav class="border-b border-purple-900/50 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl animate-bounce">🐍</span>
+                <span class="font-retro text-xs md:text-sm text-purpleguy-light tracking-wider neon-purple">PROJECT: BRUNO-COBRA</span>
+                <span class="text-2xl animate-bounce" style="animation-delay: 0.2s">🔪</span>
+            </div>
+            <a href="#matrix-button" onclick="triggerGlitchEffect()" class="bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-500 hover:to-cyan-500 text-white text-xs font-tech px-4 py-2 rounded-full shadow-md hover:scale-105 transition flex items-center gap-2">
+                <i data-lucide="zap" class="w-4 h-4"></i> VAZAR VERDADE
+            </a>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="relative pt-12 pb-20 px-4 max-w-5xl mx-auto text-center flex flex-col items-center justify-center min-h-[85vh]">
+        <!-- Glows de Fundo -->
+        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl -z-10"></div>
+        <div class="absolute top-1/3 left-1/3 w-80 h-80 bg-cyan-500/15 rounded-full blur-3xl -z-10"></div>
+
+        <!-- Badges / Tags -->
+        <div class="inline-flex items-center gap-2 bg-purple-950/80 border border-purple-500/50 text-purple-300 px-4 py-1.5 rounded-full text-xs md:text-sm font-tech mb-6 shadow-inner animate-pulse">
+            <i data-lucide="alert-triangle" class="w-4 h-4 text-yellow-400"></i>
+            <span>Dossiê Ultra Secreto #87 - 100% Verídico (Confia)</span>
+        </div>
+
+        <h1 class="text-4xl md:text-7xl font-extrabold tracking-tight mb-6 font-tech leading-tight">
+            REVELADO: O Cobra é na verdade o <span class="neon-cyan text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-slate-200">BRUNO</span>?!
+        </h1>
+
+        <p class="text-lg md:text-2xl text-slate-300 max-w-3xl mb-10 font-fun font-normal leading-relaxed">
+            Após anos de investigações no submundo da internet, reunimos provas <strong class="text-purple-400 underline decoration-wavy decoration-cyan-400">irrefutáveis e indiscutíveis</strong> de que o lendário Cobra e o Bruno são o mesmo indivíduo místico.
+        </p>
+
+        <!-- PERSONAGENS FACE-OFF (Purple Guy vs Knife Bruno) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-3xl my-6">
+            <!-- Cobra / Purple Guy -->
+            <div class="bg-slate-900/90 border-2 border-purple-600/60 rounded-2xl p-6 flex flex-col items-center relative overflow-hidden group hover:border-purple-400 transition-all duration-300 shadow-xl shadow-purple-950/50">
+                <div class="absolute -right-6 -top-6 bg-purple-600/20 w-24 h-24 rounded-full blur-xl"></div>
+                
+                <div class="h-40 flex items-center justify-center my-4">
+                    <!-- Icon/Representation Purple Guy -->
+                    <div class="relative animate-float">
+                        <div class="w-24 h-28 bg-purple-700 rounded-lg border-4 border-purple-400 shadow-[0_0_20px_rgba(168,85,247,0.8)] flex flex-col items-center justify-between p-2">
+                            <!-- Olhos FNAF -->
+                            <div class="flex justify-between w-full px-2 mt-2">
+                                <div class="w-4 h-4 bg-white rounded-sm animate-ping"></div>
+                                <div class="w-4 h-4 bg-white rounded-sm"></div>
+                            </div>
+                            <!-- Sorriso Assustador -->
+                            <div class="w-12 h-3 bg-yellow-300 rounded-full border-2 border-black flex items-center justify-center overflow-hidden">
+                                <div class="w-full h-1 bg-black"></div>
+                            </div>
+                            <!-- Badge -->
+                            <div class="w-6 h-6 bg-yellow-400 rotate-45 border border-amber-600 mb-1"></div>
+                        </div>
+                        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-retro text-purple-300 whitespace-nowrap">PURPLE GUY</span>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-purple-300 font-tech mt-2">O COBRA</h3>
+                <p class="text-xs text-purple-200/70 font-retro mt-1">"Why do you call him Purple Guy?"</p>
+            </div>
+
+            <!-- Bruno / Faca -->
+            <div class="bg-slate-900/90 border-2 border-cyan-600/60 rounded-2xl p-6 flex flex-col items-center relative overflow-hidden group hover:border-cyan-400 transition-all duration-300 shadow-xl shadow-cyan-950/50">
+                <div class="absolute -left-6 -top-6 bg-cyan-600/20 w-24 h-24 rounded-full blur-xl"></div>
+
+                <div class="h-40 flex items-center justify-center my-4">
+                    <!-- Knife Graphic -->
+                    <div class="relative animate-float" style="animation-delay: 0.5s">
+                        <div class="knife-glow transform -rotate-45 hover:rotate-0 transition-transform duration-500">
+                            <i data-lucide="sword" class="w-28 h-28 text-slate-100 fill-slate-300"></i>
+                        </div>
+                        <span class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] font-retro text-cyan-300 whitespace-nowrap">AMOLADO E PERIGOSO</span>
+                    </div>
+                </div>
+
+                <h3 class="text-2xl font-bold text-cyan-300 font-tech mt-2">O BRUNO</h3>
+                <p class="text-xs text-cyan-200/70 font-retro mt-1">"Corta qualquer argumento na metade"</p>
+            </div>
+        </div>
+
+        <!-- MEDIDOR DE CERTEZA MANIPULADO -->
+        <div class="w-full max-w-2xl bg-slate-900/90 border border-purple-500/40 rounded-2xl p-6 mt-8 shadow-2xl backdrop-blur-md">
+            <div class="flex justify-between items-center mb-3">
+                <label class="font-tech text-sm text-slate-300 flex items-center gap-2">
+                    <i data-lucide="gauge" class="text-purple-400"></i>
+                    Nível de Certeza Científica da Teoria:
+                </label>
+                <span id="certainty-val" class="font-retro text-yellow-400 text-sm neon-purple">1000% CONFIRMADO!</span>
+            </div>
+
+            <!-- Slider Interativo que SEMPRE reseta para 1000% -->
+            <input type="range" id="certainty-slider" min="0" max="1000" value="1000" 
+                   oninput="handleSliderInput(this.value)"
+                   class="w-full h-4 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-purple-500">
+            
+            <p id="slider-desc" class="text-xs text-purple-300/80 mt-2 italic">
+                (Tente diminuir a certeza. Vá em frente, tente.)
+            </p>
+        </div>
+    </header>
+
+    <!-- SEÇÃO 2: COMPARATIVO E ARGUMENTOS SEM SENTIDO -->
+    <section class="py-16 px-4 max-w-6xl mx-auto">
+        <div class="text-center mb-12">
+            <h2 class="text-3xl md:text-5xl font-bold font-tech text-white mb-4">
+                <span class="text-purple-400">#</span> A Comparação Definitiva
+            </h2>
+            <p class="text-slate-400 max-w-2xl mx-auto">
+                Analise os fatos. A matemática não mente, a física se curva e a lógica chora.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1 -->
+            <div class="bg-slate-900/80 border border-slate-800 hover:border-purple-500/80 p-6 rounded-2xl transition duration-300 hover:-translate-y-2 group flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4 border border-purple-500/30 group-hover:scale-110 transition">
+                        <i data-lucide="eye-off" class="text-purple-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 font-tech mb-2">Presença Espacial</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Você já viu o Cobra e o Bruno **NO MESMO QUARTO** exatamente no mesmo milissegundo? Não. Nunca! Se eles fossem pessoas diferentes, estariam tirando uma foto juntos agora. Coincidência? **ACHO QUE NÃO!**
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-purple-400 font-tech">
+                    <span>Nível de prova: 99.9%</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="bg-slate-900/80 border border-slate-800 hover:border-cyan-500/80 p-6 rounded-2xl transition duration-300 hover:-translate-y-2 group flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 bg-cyan-900/50 rounded-xl flex items-center justify-center mb-4 border border-cyan-500/30 group-hover:scale-110 transition">
+                        <i data-lucide="binary" class="text-cyan-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 font-tech mb-2">Numerologia Avançada</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        <strong>FNAF</strong> tem 4 letras. <strong>FACA</strong> tem 4 letras. <strong>BRUNO</strong> tem 5 letras, mas se tirar a letra 'O', fica 4! Se somar tudo dá 12, que é o número de pizzas que o Purple Guy comeu em 1987.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-cyan-400 font-tech">
+                    <span>Iluminati Confirmado</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="bg-slate-900/80 border border-slate-800 hover:border-purple-500/80 p-6 rounded-2xl transition duration-300 hover:-translate-y-2 group flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4 border border-purple-500/30 group-hover:scale-110 transition">
+                        <i data-lucide="utensils" class="text-purple-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 font-tech mb-2">A Teoria da Beterraba</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        O Purple Guy é ROXO. Sabe o que mais é roxo? A beterraba. O que você usa para cortar uma beterraba? **UMA FACA**. E quem é a faca? **O BRUNO**. É uma cadeia alimentar lógica!
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-purple-400 font-tech">
+                    <span>Biologia Aplicada</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="bg-slate-900/80 border border-slate-800 hover:border-cyan-500/80 p-6 rounded-2xl transition duration-300 hover:-translate-y-2 group flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 bg-cyan-900/50 rounded-xl flex items-center justify-center mb-4 border border-cyan-500/30 group-hover:scale-110 transition">
+                        <i data-lucide="repeat" class="text-cyan-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 font-tech mb-2">Rimas Incontestáveis</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Cobra rima com manobra, que rima com **DOBRA**. O que você faz para guardar uma Faca Butterfly? Você **DOBRA** ela! O Bruno é uma faca que se dobra feito uma cobra.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-cyan-400 font-tech">
+                    <span>Linguística Quântica</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 5 -->
+            <div class="bg-slate-900/80 border border-slate-800 hover:border-purple-500/80 p-6 rounded-2xl transition duration-300 hover:-translate-y-2 group flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4 border border-purple-500/30 group-hover:scale-110 transition">
+                        <i data-lucide="volume-x" class="text-purple-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 font-tech mb-2">Áudio Invertido de FNAF</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Se você pegar o rugido do Freddy no FNAF 1, desacelerar em 800%, inverter o canal esquerdo e aplicar um filtro de eco, o som resultante diz claramente: *"E aí mano, é o Bruno"*.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-purple-400 font-tech">
+                    <span>Percepção Acústica</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+            <!-- Card 6 -->
+            <div class="bg-slate-900/80 border border-slate-800 hover:border-cyan-500/80 p-6 rounded-2xl transition duration-300 hover:-translate-y-2 group flex flex-col justify-between">
+                <div>
+                    <div class="w-12 h-12 bg-cyan-900/50 rounded-xl flex items-center justify-center mb-4 border border-cyan-500/30 group-hover:scale-110 transition">
+                        <i data-lucide="zap" class="text-cyan-400"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-100 font-tech mb-2">Teste do Espelho</h3>
+                    <p class="text-slate-300 text-sm leading-relaxed">
+                        Tente falar "Cobra" 3 vezes na frente do espelho à meia-noite segurando uma faca de manteiga. O Bruno vai aparecer no seu WhatsApp perguntando que horas é o jogo.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 flex justify-between items-center text-xs text-cyan-400 font-tech">
+                    <span>Mitologia Moderna</span>
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SEÇÃO 3: EVIDÊNCIAS & GRÁFICO SEM SENTIDO -->
+    <section class="py-16 px-4 bg-slate-950/60 border-y border-purple-900/30">
+        <div class="max-w-5xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                
+                <!-- Gráfico de Pizza SVG Custom sem sentido -->
+                <div class="bg-slate-900/90 border border-purple-500/30 p-6 rounded-3xl shadow-xl flex flex-col items-center">
+                    <h3 class="text-2xl font-bold font-tech text-slate-100 mb-6 text-center flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="text-purple-400"></i> Composição Genética do Bruno
+                    </h3>
+                    
+                    <div class="relative w-64 h-64 flex items-center justify-center">
+                        <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                            <!-- Pizza Slice 1: Roxo (50%) -->
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                                  fill="none" stroke="#7e22ce" stroke-width="8" stroke-dasharray="50, 100" />
+                            <!-- Pizza Slice 2: Cyan Lâmina (50%) -->
+                            <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" 
+                                  fill="none" stroke="#38bdf8" stroke-width="8" stroke-dasharray="50, 100" stroke-dashoffset="-50" />
+                            <!-- Pizza Slice 3: Amarelo Absurdo (100% Por cima) -->
+                            <circle cx="18" cy="18" r="10" fill="none" stroke="#facc15" stroke-width="2" stroke-dasharray="100, 100" class="animate-pulse" />
+                        </svg>
+                        <div class="absolute text-center flex flex-col items-center">
+                            <span class="font-retro text-yellow-400 text-lg">200%</span>
+                            <span class="text-[10px] font-tech text-slate-300">TOTAL</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 w-full mt-6 text-center text-xs font-tech">
+                        <div class="bg-purple-950/80 border border-purple-500/40 p-2 rounded-lg">
+                            <span class="block text-purple-400 font-bold">50%</span>
+                            <span class="text-slate-300">Roxo (FNAF)</span>
+                        </div>
+                        <div class="bg-sky-950/80 border border-sky-500/40 p-2 rounded-lg">
+                            <span class="block text-sky-400 font-bold">50%</span>
+                            <span class="text-slate-300">Aço Inox</span>
+                        </div>
+                        <div class="bg-yellow-950/80 border border-yellow-500/40 p-2 rounded-lg">
+                            <span class="block text-yellow-400 font-bold">100%</span>
+                            <span class="text-slate-300">Puro Bruno</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GERADOR DE PROVAS ALEATÓRIAS -->
+                <div class="flex flex-col gap-6">
+                    <div>
+                        <h3 class="text-3xl font-bold font-tech text-white mb-3">Gerador Super-Computador de Provas</h3>
+                        <p class="text-slate-400 text-sm">
+                            Clique no botão abaixo para processar nos nossos servidores quânticos uma nova prova totalmente aleatória de que o Cobra é o Bruno.
+                        </p>
+                    </div>
+
+                    <div id="proof-box" class="bg-purple-950/40 border border-purple-500/50 p-6 rounded-2xl min-h-[140px] flex items-center justify-center text-center shadow-inner relative overflow-hidden">
+                        <p id="proof-text" class="text-lg text-purple-200 font-fun font-medium italic">
+                            "Clique no botão para revelar a primeira evidência quântica..."
+                        </p>
+                    </div>
+
+                    <button onclick="generateRandomProof()" class="w-full py-4 bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-800 hover:from-purple-500 hover:to-indigo-700 text-white font-tech font-bold rounded-xl shadow-lg hover:shadow-purple-500/25 transition transform active:scale-95 flex items-center justify-center gap-3">
+                        <i data-lucide="sparkles"></i> GERAR PROVA ALEATÓRIA
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 4: SCANNER DE IDENTIDADE (MINI-GAME) -->
+    <section class="py-16 px-4 max-w-4xl mx-auto text-center">
+        <div class="mb-8">
+            <h2 class="text-3xl md:text-5xl font-bold font-tech text-white mb-3">
+                <i data-lucide="scan" class="inline text-cyan-400 w-10 h-10 -mt-2"></i> Scanner de Identidade 3000
+            </h2>
+            <p class="text-slate-400">
+                Pressione o sensor biométrico para analisar a essência do seu navegador e descobrir a verdade.
+            </p>
+        </div>
+
+        <div class="bg-slate-900/90 border-2 border-slate-800 rounded-3xl p-8 relative overflow-hidden shadow-2xl">
+            <!-- Ray Screen FX -->
+            <div id="scan-line" class="hidden absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-purple-500 via-cyan-400 to-purple-500 shadow-[0_0_15px_#38bdf8] z-20"></div>
+
+            <div class="flex flex-col items-center justify-center py-8">
+                <!-- Visual Target -->
+                <div id="scan-target" class="w-32 h-32 rounded-full border-4 border-dashed border-purple-500/60 flex items-center justify-center mb-6 relative cursor-pointer hover:scale-105 transition group" onclick="startScanner()">
+                    <div class="w-24 h-24 rounded-full bg-purple-900/40 flex items-center justify-center group-hover:bg-purple-800/60 transition">
+                        <i data-lucide="fingerprint" class="w-16 h-16 text-purple-400 group-hover:text-cyan-300 transition"></i>
+                    </div>
+                </div>
+
+                <p id="scan-status" class="font-retro text-xs text-purple-300 mb-6">AEROPORTO DE VERDADES: PRONTO</p>
+
+                <button id="scan-btn" onclick="startScanner()" class="px-8 py-3 bg-cyan-600 hover:bg-cyan-500 text-white font-tech font-bold rounded-full shadow-lg hover:shadow-cyan-500/40 transition">
+                    INICIAR ESCANEAMENTO
+                </button>
+
+                <!-- Resultado do Scanner -->
+                <div id="scan-result" class="hidden mt-6 p-4 bg-purple-950 border border-purple-400 rounded-2xl w-full max-w-md animate-bounce">
+                    <span class="text-yellow-400 font-retro text-xs block mb-1">SCAN CONCLUÍDO!</span>
+                    <h4 class="text-xl font-bold font-tech text-white">Resultado: 100% Cobra-Faca-Bruno!</h4>
+                    <p class="text-xs text-purple-200 mt-1">A sua própria energia Wi-Fi confirmou a teoria.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEÇÃO 5: VOTAÇÃO DA COMUNIDADE & MODO MATRIX -->
+    <section class="py-16 px-4 max-w-4xl mx-auto text-center" id="matrix-button">
+        <div class="bg-gradient-to-b from-slate-900 to-purple-950/80 border border-purple-500/40 rounded-3xl p-8 md:p-12 shadow-2xl">
+            <h2 class="text-3xl md:text-4xl font-bold font-tech text-white mb-4">
+                Qual o seu posicionamento?
+            </h2>
+            <p class="text-slate-300 mb-8 max-w-xl mx-auto text-sm">
+                Vote honestamente. Todos os votos são computados diretamente nos servidores ultra-secretos da Pizzaria Freddy Fazbear.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <!-- Botão Voto 1 -->
+                <button onclick="vote('yes')" class="p-6 bg-slate-800/90 hover:bg-purple-900/60 border-2 border-purple-500/50 hover:border-purple-400 rounded-2xl flex flex-col items-center gap-3 transition transform active:scale-95 group shadow-lg">
+                    <span class="text-4xl group-hover:scale-125 transition">👁️‍🗨️</span>
+                    <span class="font-tech font-bold text-lg text-purple-300">Acredito Totalmente</span>
+                    <span class="text-xs text-slate-400">O Cobra é o Bruno com certeza absoluta</span>
+                    <div class="mt-2 bg-purple-950 border border-purple-500/40 px-4 py-1 rounded-full text-yellow-400 font-retro text-xs" id="count-yes">
+                        48,912 VOTOS
+                    </div>
+                </button>
+
+                <!-- Botão Voto 2 -->
+                <button onclick="vote('no')" class="p-6 bg-slate-800/90 hover:bg-cyan-900/60 border-2 border-cyan-500/50 hover:border-cyan-400 rounded-2xl flex flex-col items-center gap-3 transition transform active:scale-95 group shadow-lg">
+                    <span class="text-4xl group-hover:scale-125 transition">🕹️</span>
+                    <span class="font-tech font-bold text-lg text-cyan-300">Fui Manipulado Pela Matrix</span>
+                    <span class="text-xs text-slate-400">Ainda estou tentando processar os fatos</span>
+                    <div class="mt-2 bg-cyan-950 border border-cyan-500/40 px-4 py-1 rounded-full text-yellow-400 font-retro text-xs" id="count-no">
+                        12,401 VOTOS
+                    </div>
+                </button>
+            </div>
+
+            <!-- BOTAO VAZAR VERDADE SECRETA (GLITCH EFFECT) -->
+            <div class="pt-6 border-t border-purple-900/50">
+                <button onclick="triggerGlitchEffect()" class="px-8 py-5 bg-gradient-to-r from-red-600 via-purple-600 to-cyan-600 hover:from-red-500 hover:to-cyan-500 text-white font-retro text-xs md:text-sm rounded-2xl shadow-xl hover:shadow-purple-500/50 transition transform hover:scale-105 active:scale-95 flex items-center justify-center gap-3 mx-auto">
+                    <i data-lucide="radioactive"></i> VAZAR VERDADE SECRETA NO SISTEMA
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="py-8 border-t border-slate-900 text-center text-xs text-slate-500 font-tech">
+        <p class="mb-2">Site criado puramente pelo meme e entretenimento. Nenhum Bruno ou Cobra foi ferido na elaboração deste site.</p>
+        <p class="text-purple-400/60">Purple Guy © FNAF | Faca © Cozinha | Bruno © Cobra</p>
+    </footer>
+
+    <!-- JAVASCRIPT & AUDIO ENGINE -->
+    <script>
+        // Inicializar Lucide Icons
+        lucide.createIcons();
+
+        // Estado do Som
+        let soundEnabled = true;
+        let audioCtx = null;
+
+        // Web Audio API Synth FX (Sons 8-bit retro sem arquivos externos)
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                const now = ctx.currentTime;
+
+                if (type === 'click') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(800, now + 0.08);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                    osc.start(now);
+                    osc.stop(now + 0.08);
+                } else if (type === 'knife') {
+                    // Som de corte metálico
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(1200, now);
+                    osc.frequency.exponentialRampToValueAtTime(100, now + 0.15);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                } else if (type === 'glitch') {
+                    // Som de erro/glitch FNAF
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.setValueAtTime(600, now + 0.05);
+                    osc.frequency.setValueAtTime(90, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'laugh') {
+                    // Risada sintetizada retro
+                    for(let i = 0; i < 4; i++) {
+                        setTimeout(() => {
+                            const o = ctx.createOscillator();
+                            const g = ctx.createGain();
+                            o.connect(g);
+                            g.connect(ctx.destination);
+                            o.type = 'sawtooth';
+                            o.frequency.setValueAtTime(220 - (i * 20), ctx.currentTime);
+                            g.gain.setValueAtTime(0.15, ctx.currentTime);
+                            g.gain.linearRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+                            o.start(ctx.currentTime);
+                            o.stop(ctx.currentTime + 0.1);
+                        }, i * 120);
+                    }
+                }
+            } catch(e) {
+                console.log('Audio disabled or blocked by browser');
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const status = document.getElementById('sound-status');
+            const icon = document.getElementById('sound-icon');
+            if (soundEnabled) {
+                status.innerText = 'SOM: ON';
+                icon.setAttribute('data-lucide', 'volume-2');
+            } else {
+                status.innerText = 'SOM: OFF';
+                icon.setAttribute('data-lucide', 'volume-x');
+            }
+            lucide.createIcons();
+        }
+
+        // SLIDER CONTROL
+        function handleSliderInput(val) {
+            playSound('click');
+            const desc = document.getElementById('slider-desc');
+            const valLabel = document.getElementById('certainty-val');
+            
+            // Forçar o valor a voltar para 1000 de forma engraçada
+            setTimeout(() => {
+                document.getElementById('certainty-slider').value = 1000;
+                valLabel.innerText = '1000% CONFIRMADO!';
+                desc.innerText = '⚠️ O sistema corrigiu automaticamente. Não tente burlar os fatos!';
+                desc.classList.add('text-yellow-400');
+            }, 300);
+        }
+
+        // GERADOR DE PROVAS ALEATÓRIAS
+        const randomProofs = [
+            "Se você pegar a palavra 'COBRA', trocar o C por B, o O por R, o B por U, o R por N e o A por O, fica 'BRUNO'. Coincidência?",
+            "O Purple Guy gosta de roxo. O Bruno uma vez usou uma meia roxa em 2018. Preciso falar mais alguma coisa?",
+            "Em um estudo feito por mim mesmo no meu chuveiro, 100% dos entrevistados concordaram que nunca viram o Cobra e uma faca no mesmo restaurante.",
+            "As cobras trocam de pele. O Bruno troca de roupa. É LITERALMENTE O MESMO CONCEITO BIOLÓGICO.",
+            "Se você somar a idade do Bruno com o número de dentes de uma faca de pão, o resultado é igual aos minigames do FNAF 2.",
+            "Uma faca é afiada. A cobra tem dentes afiados. O Bruno tem ideias afiadas. É uma trindade sagrada.",
+            "Foi confirmado por telepatia que o Purple Guy tem o Bruno como foto de perfil secreta no Steam."
+        ];
+
+        function generateRandomProof() {
+            playSound('knife');
+            const box = document.getElementById('proof-box');
+            const text = document.getElementById('proof-text');
+            
+            box.classList.add('animate-pulse');
+            text.innerText = "Processando evidências quânticas...";
+
+            setTimeout(() => {
+                const randomIdx = Math.floor(Math.random() * randomProofs.length);
+                text.innerText = `"${randomProofs[randomIdx]}"`;
+                box.classList.remove('animate-pulse');
+            }, 400);
+        }
+
+        // SCANNER DE IDENTIDADE
+        function startScanner() {
+            playSound('glitch');
+            const line = document.getElementById('scan-line');
+            const status = document.getElementById('scan-status');
+            const result = document.getElementById('scan-result');
+            const btn = document.getElementById('scan-btn');
+
+            line.classList.remove('hidden');
+            line.classList.add('animate-bounce');
+            status.innerText = "ESCANEAR: ANALISANDO DNA DE FACA & PURPLE GUY...";
+            btn.disabled = true;
+            btn.classList.add('opacity-50');
+
+            setTimeout(() => {
+                line.classList.add('hidden');
+                status.innerText = "ANÁLISE FINALIZADA!";
+                result.classList.remove('hidden');
+                playSound('laugh');
+                btn.disabled = false;
+                btn.classList.remove('opacity-50');
+            }, 2000);
+        }
+
+        // VOTING SYSTEM
+        let yesVotes = 48912;
+        let noVotes = 12401;
+
+        function vote(type) {
+            playSound('click');
+            if (type === 'yes') {
+                yesVotes += Math.floor(Math.random() * 10) + 1;
+                document.getElementById('count-yes').innerText = `${yesVotes.toLocaleString()} VOTOS`;
+            } else {
+                // Mesmo se votar 'não', adiciona votos no SIM de sacanagem meme!
+                noVotes += 1;
+                yesVotes += 50; 
+                document.getElementById('count-no').innerText = `${noVotes.toLocaleString()} VOTOS`;
+                document.getElementById('count-yes').innerText = `${yesVotes.toLocaleString()} VOTOS (+50 PELA MATRIX)`;
+            }
+        }
+
+        // CANVAS SPECIAL FX & MODO GLITCH
+        const canvas = document.getElementById('fx-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, char, color) {
+                this.x = x;
+                this.y = y;
+                this.char = char;
+                this.color = color;
+                this.size = Math.random() * 20 + 14;
+                this.speedY = Math.random() * 3 + 2;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.opacity = 1;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.opacity -= 0.008;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.opacity);
+                ctx.font = `${this.size}px 'Press Start 2P', monospace`;
+                ctx.fillStyle = this.color;
+                ctx.fillText(this.char, this.x, this.y);
+                ctx.restore();
+            }
+        }
+
+        let isGlitching = false;
+
+        function triggerGlitchEffect() {
+            playSound('laugh');
+            playSound('glitch');
+
+            document.body.classList.add('animate-shake');
+            setTimeout(() => document.body.classList.remove('animate-shake'), 1000);
+
+            // Gerar partículas de Purple Guy / Facas / Cobras
+            const symbols = ['🐍', '🔪', '💜', 'FNAF', 'BRUNO', '1000%'];
+            const colors = ['#a855f7', '#38bdf8', '#facc15', '#ef4444'];
+
+            for (let i = 0; i < 70; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * (canvas.height / 2);
+                const char = symbols[Math.floor(Math.random() * symbols.length)];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particles.push(new Particle(x, y, char, color));
+            }
+
+            if (!isGlitching) {
+                isGlitching = true;
+                animateParticles();
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].opacity <= 0 || particles[i].y > canvas.height) {
+                    particles.splice(i, 1);
+                }
+            }
+
+            if (particles.length > 0) {
+                requestAnimationFrame(animateParticles);
+            } else {
+                isGlitching = false;
+            }
+        }
+    </script>
+</body>
+</html>
